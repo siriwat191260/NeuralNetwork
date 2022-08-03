@@ -50,11 +50,11 @@ public class main {
                     }
                 }
                 j++;
-                }
+            }
 
             myReader.close();
 
-            NeuronNetwork n = new NeuronNetwork(train_dataset,train_dataset_desired);
+            NeuronNetwork n = new NeuronNetwork(train_dataset,train_dataset_desired,test_dataset,test_dataset_desired);
             n.train();
 
         } catch (FileNotFoundException e) {

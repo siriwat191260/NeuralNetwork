@@ -1,8 +1,10 @@
 import java.util.ArrayList;
 
 public class NeuronNetwork {
-    ArrayList<Double[]> train_dataset = new ArrayList<>();
-    ArrayList<Double[]> train_dataset_desired = new ArrayList<>();
+    ArrayList<Double[]> train_dataset;
+    ArrayList<Double[]> train_dataset_desired;
+    ArrayList<Double[]> test_dataset;
+    ArrayList<Double[]> test_dataset_desired;
     int Neural_Layer[] = {8,6,6,1};
     Double Node[][] = new Double[Neural_Layer.length][];
     Double Desire_Node[] = new Double[Neural_Layer[Neural_Layer.length-1]];
@@ -11,14 +13,16 @@ public class NeuronNetwork {
     Double Min_Error = 0.00001;
     Matrix[] Weight_Layer = new Matrix[Neural_Layer.length - 1];
     Matrix[] Changed_Weight = new Matrix[Neural_Layer.length - 1];
-    Double Max_Epoch = 10.0;
+    Double Max_Epoch = 1000.0;
     Double biases = 0.1;
     Double learning_rate = 0.01;
     Double error_output[] = new Double[Neural_Layer[Neural_Layer.length-1]];
 
-    public NeuronNetwork(ArrayList a, ArrayList b) {
+    public NeuronNetwork(ArrayList a, ArrayList b, ArrayList c, ArrayList d) {
         train_dataset = a;
         train_dataset_desired = b;
+        test_dataset = c;
+        test_dataset_desired = d;
         //node and local gradient in each layer
         for (int i = 0; i < Neural_Layer.length; i++) {
             Node[i] = new Double[Neural_Layer[i]];
@@ -36,10 +40,10 @@ public class NeuronNetwork {
     public void train() {
         int n = 0;
         double sse ;
-        double avg_error = 0.0;
-        double sum_error = 0.0;
+        double avg_error = 1000.0;
         double e = 0.0;
         while (n < Max_Epoch && Error_Avg > Min_Error) {
+            double sum_error = 0.0;
             for (int data = 0; data < train_dataset.size(); data++) {
                 int rand_dataset = (int) (Math.random() * train_dataset.size()); //random index data
                 for (int data_input = 0; data_input < Neural_Layer[0]; data_input++) { //add data to input Node
@@ -56,37 +60,37 @@ public class NeuronNetwork {
                 double d = train_dataset_desired.get(rand_dataset)[0] * 700.0;
                 double g = Node[Neural_Layer.length - 1][0] * 700;
                 e = d-g; // error
-                System.out.println("Desire : "+ d + " || Output : " + g + " || Error : " + e +" ||  e :"+error_output[0]*700 +" ||  : ");
-            }
-            sum_error += Math.pow(e,2.0); // sum of error^2
+                System.out.println("Desire : "+ d + "\t\t || Output : " + g + " \t|| Error : " + e);
 
+                sum_error += 0.5*Math.pow(error_output[0],2.0); // sum of error^2
+
+            }
+            sse = sum_error/2;
+            avg_error = sse/ train_dataset.size(); //average error
             n++;//next epoch
         }
 
-        sse = sum_error/2; // sum of square error
-        avg_error = sse/n; //average error
+
         System.out.println("Average : "+ avg_error);
     }
 
-
     public void test(){
-            for (int data = 0; data < train_dataset.size(); data++) {
+        for (int data = 0; data < train_dataset.size(); data++) {
 
-                int rand_dataset = (int) (Math.random() * train_dataset.size());
-
-                for (int data_input = 0; data_input < Neural_Layer[0]; data_input++) {
-                    Node[0][data_input] = train_dataset.get(rand_dataset)[data_input];
-                }
-
-                for (int data_input = 0;data_input < Neural_Layer[Neural_Layer.length-1];data_input++){
-                    Desire_Node[data_input] = train_dataset_desired.get(rand_dataset)[data_input];
-                }
-                forward_pass();
-
-                double d = train_dataset_desired.get(rand_dataset)[0] * 700.0;
-                double g = Node[Neural_Layer.length - 1][0] * 700;
-                System.out.println("Desire : "+ d + " || Output : " + g + " || Error : " + (d - g) +" : e :"+ error_output[0]*700);
+            for (int data_input = 0; data_input < Neural_Layer[0]; data_input++) {
+                Node[0][data_input] = test_dataset.get(data)[data_input];
             }
+
+            for (int data_input = 0;data_input < Neural_Layer[Neural_Layer.length-1];data_input++){
+                Desire_Node[data_input] = test_dataset_desired.get(data)[data_input];
+            }
+            forward_pass();
+            get_error();
+
+            double d = test_dataset_desired.get(data)[0] * 700.0;
+            double g = Node[Neural_Layer.length - 1][0] * 700;
+            System.out.println("Desire : "+ d + " || Output : " + g + " || Error : " + (d - g));
+        }
     }
 
     public void forward_pass() {
@@ -127,36 +131,30 @@ public class NeuronNetwork {
         find_local_gradient();
         find_delta_weight();
 
-
-
-        }
-
-
-
-
+    }
 
     public void find_local_gradient(){
 
-       for(int layer=Neural_Layer.length-2;layer>0;layer--){
-           for(int j=0;j<Neural_Layer[layer];j++){
-               Double result_sum = 0.0;
-               for(int k=0;k<Neural_Layer[layer+1];k++){
-               result_sum += Local_Gradient_Node[layer+1][k]*Weight_Layer[layer].data[k][j];
-           }
-               Local_Gradient_Node[layer][j] = activation_fn_diff(Node[layer][j])*result_sum;
+        for(int layer=Neural_Layer.length-2;layer>=0;layer--){
+            for(int j=0;j<Neural_Layer[layer];j++){
+                Double result_sum = 0.0;
+                for(int k=0;k<Neural_Layer[layer+1];k++){
+                    result_sum += Local_Gradient_Node[layer+1][k]*Weight_Layer[layer].data[k][j];
+                }
+                Local_Gradient_Node[layer][j] = activation_fn_diff(Node[layer][j])*result_sum;
 
-           }
-       }
+            }
+        }
     }
 
     public void find_delta_weight(){
         Double change_weight_sum;
 
-        for(int layer=Neural_Layer.length-2;layer>0;layer--){
-            for(int j=0;j<Neural_Layer[layer];j++){;
-                for(int i=0;i<Neural_Layer[layer-1];i++){
-                    change_weight_sum = learning_rate * Local_Gradient_Node[layer][j] * activation_fn(Node[layer-1][i]);
-                    Changed_Weight[layer-1].data[j][i] = change_weight_sum;
+        for(int layer=Neural_Layer.length-3;layer>=0;layer--){
+            for(int j=0;j<Neural_Layer[layer+1];j++){;
+                for(int i=0;i<Neural_Layer[layer];i++){
+                    change_weight_sum = learning_rate * Local_Gradient_Node[layer+1][j] * activation_fn(Node[layer][i]);
+                    Changed_Weight[layer].data[j][i] = change_weight_sum;
                 }
 
             }
@@ -166,16 +164,13 @@ public class NeuronNetwork {
     //calculate new weight
     public void weight_new() {
         for (int l = 0; l < Weight_Layer.length - 1; l++) {
-            for (int a = 0; a < Neural_Layer[Neural_Layer.length - 2]; a++) {
-                for (int b = 0; b < Neural_Layer[Neural_Layer.length - 1]; b++) {
+            for (int a = 0; a < Neural_Layer[l+1]; a++) {
+                for (int b = 0; b < Neural_Layer[l]; b++) {
                     Weight_Layer[l].data[a][b] = Weight_Layer[l].data[a][b] + Changed_Weight[l].data[a][b];
                 }
             }
         }
     }
-
-
-
 
     //sigmoid function
     public Double activation_fn(Double a){
@@ -192,6 +187,5 @@ public class NeuronNetwork {
             return 1.0;
         }
     }
-
 
 }
