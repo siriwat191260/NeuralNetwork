@@ -5,7 +5,7 @@ public class NeuronNetwork {
     ArrayList<Double[]> train_dataset_desired;
     ArrayList<Double[]> test_dataset;
     ArrayList<Double[]> test_dataset_desired;
-    int Neural_Layer[] = {8,16,16,16,16,1};
+    int Neural_Layer[] = {8,16,16,16,1};
     Double Node[][] = new Double[Neural_Layer.length][];
     Double Desire_Node[] = new Double[Neural_Layer[Neural_Layer.length-1]];
     Double Local_Gradient_Node[][] = new Double[Neural_Layer.length][];
@@ -15,7 +15,7 @@ public class NeuronNetwork {
     Matrix[] Changed_Weight = new Matrix[Neural_Layer.length - 1];
     Double Max_Epoch = 1000.0;
     Double biases = 0.1;
-    Double learning_rate = 0.01;
+    Double learning_rate = 0.01; //0.01
     Double momentum_rate = 0.01;
     Double error_output[] = new Double[Neural_Layer[Neural_Layer.length-1]];
 
@@ -64,19 +64,21 @@ public class NeuronNetwork {
                 double d = train_dataset_desired.get(rand_dataset)[0] * 700.0;
                 double g = Node[Neural_Layer.length - 1][0] * 700;
                 e = d-g; // error
-               System.out.println("Desire : "+ d + "\t\t || Output : " + g + " \t|| Error : " + e);
+//               System.out.println("Desire : "+ d + "\t\t || Output : " + g + " \t|| Error : " + e);
 
                 sum_error += Math.pow(error_output[0],2.0); // sum of error^2
 
             }
             sse = sum_error/2.0;
             avg_error = sse / train_dataset.size(); //average error
+            if(n == Max_Epoch-1) {
+                System.out.println("=======================================================================================");
+                System.out.println("Average final: "+ avg_error);
+                System.out.println("=======================================================================================");
+            }
             n++;//next epoch
         }
 
-        System.out.println("=======================================================================================");
-        System.out.println("Average final: "+ avg_error);
-        System.out.println("=======================================================================================");
     }
 
     public void test(){
@@ -102,7 +104,7 @@ public class NeuronNetwork {
             for(int i=0;i<Neural_Layer[Neural_Layer.length-1];i++) {
                 sum_error += Math.pow(error_output[i], 2.0);
             }
-            System.out.println("Desire : "+ d + " || Output : " + g + " || Error : " + (d - g) +" || E_Output :" + error_output[0]*700);
+//            System.out.println("Desire : "+ d + " || Output : " + g + " || Error : " + (d - g) +" || E_Output :" + error_output[0]*700);
         }
         sse = sum_error/2.0; //sum of squared error
         avg_error = sse / test_dataset.size(); //average error
