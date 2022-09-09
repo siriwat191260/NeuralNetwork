@@ -61,11 +61,6 @@ public class NeuronNetwork {
                 backward_pass();
                 weight_new();
 
-                double d = train_dataset_desired.get(rand_dataset)[0] * 700.0;
-                double g = Node[Neural_Layer.length - 1][0] * 700;
-                e = d-g; // error
-//               System.out.println("Desire : "+ d + "\t\t || Output : " + g + " \t|| Error : " + e);
-
                 sum_error += Math.pow(error_output[0],2.0); // sum of error^2
 
             }

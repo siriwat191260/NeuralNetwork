@@ -8,7 +8,7 @@ public class main {
 
             String cond = "";
 
-            cond = "flood";
+            cond = "cross";
 
             // flood data
             if (cond == "flood") {
@@ -24,7 +24,7 @@ public class main {
                         File flood_data = new File("src/Flood_dataset.txt");
                         Scanner myReader_flood = new Scanner(flood_data);
 
-                        int j = 0;
+                        int j = 0; //line
                         while (myReader_flood.hasNextLine()) {
                             String data = myReader_flood.nextLine();
                             String[] data_splited = data.split("\t");
