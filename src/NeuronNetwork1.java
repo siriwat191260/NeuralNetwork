@@ -18,7 +18,7 @@ public class NeuronNetwork1 {
     Double Max_Epoch = 1000.0;
     Double biases = 0.1;
     Double learning_rate = 0.01;
-    Double momentum_rate = 0.3;
+    Double momentum_rate = 0.01;
     Double error_output[] = new Double[Neural_Layer[Neural_Layer.length-1]];
 
     public NeuronNetwork1(ArrayList a, ArrayList b, ArrayList c, ArrayList d) {
@@ -84,19 +84,19 @@ public class NeuronNetwork1 {
                 }
 
                 // predict 0 1  result 0 1 : class A => true A
-                if(g[0].equals(d[0]) && g[1].equals(d[1])){
+                if(g[0].equals(d[0]) && g[1].equals(d[1]) && g[0].equals(1.0)){
                     tp++;
                 }
                 // predict 1 0 result 1 0 : class B => true B
-                if(g[1].equals(d[1]) && g[0].equals(d[0])){
+                if(g[0].equals(d[0]) && g[1].equals(d[1]) && g[1].equals(1.0)){
                     tn++;
                 }
                 // predict 0 1 result 1 0 : class A => false A
-                if(g[1].equals(d[0]) && g[0].equals(d[1])){
+                if(!g[0].equals(d[0]) && !g[1].equals(d[1]) && g[0].equals(1.0)){
                     fp++;
                 }
                 // predict 1 0 result 0 1 : class B => false B
-                if(g[0].equals(d[1]) && g[1].equals(d[0])){
+                if(!g[0].equals(d[0]) && !g[1].equals(d[1]) && g[1].equals(1.0)){
                     fn++;
                 }
             }
@@ -157,19 +157,19 @@ public class NeuronNetwork1 {
             }
 
             // predict 0 1  result 0 1 : class A => true A
-            if(g[0].equals(d[0]) && g[1].equals(d[1])){
+            if(g[0].equals(d[0]) && g[1].equals(d[1]) && g[0].equals(1.0)){
                 tp++;
             }
             // predict 1 0 result 1 0 : class B => true B
-            if(g[1].equals(d[1]) && g[0].equals(d[0])){
+            if(g[0].equals(d[0]) && g[1].equals(d[1]) && g[1].equals(1.0)){
                 tn++;
             }
             // predict 0 1 result 1 0 : class A => false A
-            if(g[1].equals(d[0]) && g[0].equals(d[1])){
+            if(!g[0].equals(d[0]) && !g[1].equals(d[1]) && g[0].equals(1.0)){
                 fp++;
             }
             // predict 1 0 result 0 1 : class B => false B
-            if(g[0].equals(d[1]) && g[1].equals(d[0])){
+            if(!g[0].equals(d[0]) && !g[1].equals(d[1]) && g[1].equals(1.0)){
                 fn++;
             }
         }

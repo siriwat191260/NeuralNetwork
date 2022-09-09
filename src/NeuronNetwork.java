@@ -5,7 +5,7 @@ public class NeuronNetwork {
     ArrayList<Double[]> train_dataset_desired;
     ArrayList<Double[]> test_dataset;
     ArrayList<Double[]> test_dataset_desired;
-    int Neural_Layer[] = {8,16,16,16,1};
+    int Neural_Layer[] = {8,12,6,3,1};
     Double Node[][] = new Double[Neural_Layer.length][];
     Double Desire_Node[] = new Double[Neural_Layer[Neural_Layer.length-1]];
     Double Local_Gradient_Node[][] = new Double[Neural_Layer.length][];
@@ -14,9 +14,9 @@ public class NeuronNetwork {
     Matrix[] Weight_Layer = new Matrix[Neural_Layer.length - 1];
     Matrix[] Changed_Weight = new Matrix[Neural_Layer.length - 1];
     Double Max_Epoch = 1000.0;
-    Double biases = 0.1;
-    Double learning_rate = 0.01; //0.01
-    Double momentum_rate = 0.01;
+    Double biases = 0.3;
+    Double learning_rate = 0.05; //0.01
+    Double momentum_rate = 0.07;
     Double error_output[] = new Double[Neural_Layer[Neural_Layer.length-1]];
 
     public NeuronNetwork(ArrayList a, ArrayList b, ArrayList c, ArrayList d) {
